@@ -1,0 +1,91 @@
+@import "tailwindcss";
+
+@theme {
+  /* Finance Blue */
+  --color-primary-50: #eff6ff;
+  --color-primary-100: #dbeafe;
+  --color-primary-200: #bfdbfe;
+  --color-primary-300: #93c5fd;
+  --color-primary-400: #60a5fa;
+  --color-primary-500: #3b82f6;
+  --color-primary-600: #2563eb;
+  --color-primary-700: #1d4ed8;
+  --color-primary-800: #1e40af;
+  --color-primary-900: #1e3a8a;
+
+  /* Bull Green */
+  --color-bull-50: #f0fdf4;
+  --color-bull-400: #4ade80;
+  --color-bull-500: #22c55e;
+  --color-bull-600: #16a34a;
+
+  /* Bear Red */
+  --color-bear-50: #fef2f2;
+  --color-bear-400: #f87171;
+  --color-bear-500: #ef4444;
+  --color-bear-600: #dc2626;
+
+  /* Caution Amber */
+  --color-caution-50: #fffbeb;
+  --color-caution-400: #fbbf24;
+  --color-caution-500: #f59e0b;
+  --color-caution-600: #d97706;
+
+  /* Agent Colors */
+  --color-agent-macro: #8b5cf6;
+  --color-agent-fundamental: #06b6d4;
+  --color-agent-technical: #f97316;
+  --color-agent-sentiment: #ec4899;
+
+  /* Surfaces */
+  --color-surface: #0c1220;
+  --color-surface-light: #131b2e;
+  --color-surface-lighter: #1e293b;
+  --color-surface-border: #334155;
+}
+
+body {
+  margin: 0;
+  font-family: 'Pretendard Variable', 'Pretendard', system-ui, -apple-system, sans-serif;
+  background-color: var(--color-surface);
+  color: #e2e8f0;
+  min-height: 100vh;
+}
+
+#root {
+  min-height: 100vh;
+  display: flex;
+}
+
+/* Scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: #334155;
+  border-radius: 3px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #475569;
+}
+
+/* Markdown prose */
+.prose h1, .prose h2, .prose h3 {
+  color: #f1f5f9;
+}
+.prose p, .prose li {
+  color: #cbd5e1;
+}
+.prose code {
+  background: #1e293b;
+  padding: 0.15em 0.4em;
+  border-radius: 4px;
+  font-size: 0.875em;
+}
+.prose strong {
+  color: #f1f5f9;
+}
