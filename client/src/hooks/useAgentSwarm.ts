@@ -1,5 +1,6 @@
 import { useCallback } from 'react'
 import { useAgentStore } from '@/stores/agentStore'
+import { useUIStore } from '@/stores/uiStore'
 import * as api from '@/lib/api'
 import { calcIndicators } from '@/lib/indicators'
 import type { StockData, Fundamentals } from '@/types/market'
@@ -8,6 +9,13 @@ export function useAgentSwarm() {
   const { runSwarm, cancelSwarm, clearResults, results, consensus, isRunning } = useAgentStore()
 
   const analyze = useCallback(async (ticker: string, market: 'us' | 'kr') => {
+    // Password gate for AI calls
+    const { aiPassword, setShowPasswordModal } = useUIStore.getState()
+    if (!aiPassword) {
+      setShowPasswordModal(true)
+      return
+    }
+
     try {
       // Fetch stock data + fundamentals + indicators in parallel
       const [stockData, fundamentals] = await Promise.allSettled([

@@ -9,6 +9,11 @@ interface ChatMessage {
   content: string
 }
 
+function getAuthHeaders(): Record<string, string> {
+  const pw = sessionStorage.getItem('ias_ai_pw')
+  return pw ? { 'X-Auth-Password': pw } : {}
+}
+
 export async function chatCompletion(
   messages: ChatMessage[],
   options?: { maxTokens?: number; temperature?: number; signal?: AbortSignal },
@@ -21,6 +26,7 @@ export async function chatCompletion(
     headers: {
       'Content-Type': 'application/json',
       Authorization: `Bearer ${apiKey}`,
+      ...getAuthHeaders(),
     },
     body: JSON.stringify({
       model: MODEL,
@@ -64,6 +70,7 @@ export async function streamCompletion({
     headers: {
       'Content-Type': 'application/json',
       Authorization: `Bearer ${apiKey}`,
+      ...getAuthHeaders(),
     },
     body: JSON.stringify({
       model: MODEL,

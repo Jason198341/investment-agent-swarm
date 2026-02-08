@@ -17,6 +17,8 @@ interface UIStore {
   lang: Lang
   sidebarOpen: boolean
   toasts: Toast[]
+  aiPassword: string | null
+  showPasswordModal: boolean
 
   setLang: (lang: Lang) => void
   t: (key: string) => string
@@ -24,6 +26,9 @@ interface UIStore {
   setSidebarOpen: (open: boolean) => void
   addToast: (message: string, type?: Toast['type']) => void
   removeToast: (id: string) => void
+  setAiPassword: (pw: string) => void
+  clearAiPassword: () => void
+  setShowPasswordModal: (show: boolean) => void
 }
 
 const PREFS_KEY = 'ias_ui_prefs'
@@ -44,6 +49,8 @@ export const useUIStore = create<UIStore>((set, get) => ({
   lang: loadPrefs().lang,
   sidebarOpen: true,
   toasts: [],
+  aiPassword: sessionStorage.getItem('ias_ai_pw'),
+  showPasswordModal: false,
 
   setLang: (lang) => {
     set({ lang })
@@ -67,4 +74,14 @@ export const useUIStore = create<UIStore>((set, get) => ({
   removeToast: (id) => {
     set((s) => ({ toasts: s.toasts.filter((t) => t.id !== id) }))
   },
+
+  setAiPassword: (pw) => {
+    sessionStorage.setItem('ias_ai_pw', pw)
+    set({ aiPassword: pw, showPasswordModal: false })
+  },
+  clearAiPassword: () => {
+    sessionStorage.removeItem('ias_ai_pw')
+    set({ aiPassword: null })
+  },
+  setShowPasswordModal: (show) => set({ showPasswordModal: show }),
 }))

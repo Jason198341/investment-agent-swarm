@@ -1,5 +1,6 @@
 import { create } from 'zustand'
 import { chatCompletion } from '@/lib/fireworks'
+import { useUIStore } from '@/stores/uiStore'
 
 const STORAGE_KEY = 'ias_briefings'
 
@@ -37,6 +38,12 @@ export const useBriefingStore = create<BriefingStore>((set, get) => ({
   currentBriefing: null,
 
   generateBriefing: async (context) => {
+    const { aiPassword, setShowPasswordModal } = useUIStore.getState()
+    if (!aiPassword) {
+      setShowPasswordModal(true)
+      throw new Error('Password required')
+    }
+
     set({ isGenerating: true })
     try {
       const content = await chatCompletion([
