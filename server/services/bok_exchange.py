@@ -1,6 +1,6 @@
+"""Exchange rate service: BOK API primary, Yahoo Finance fallback."""
 import httpx
-import yfinance as yf
-from datetime import datetime
+from datetime import datetime, timezone
 from services.cache import cache
 from config import BOK_API_KEY
 from models.stock import ExchangeRateResponse
@@ -23,8 +23,8 @@ def get_usd_krw() -> ExchangeRateResponse:
         except Exception:
             pass
 
-    # Fallback: yfinance
-    result = _fetch_from_yfinance()
+    # Fallback: Yahoo Finance direct API
+    result = _fetch_from_yahoo()
     cache.set(cache_key, result, EXCHANGE_TTL)
     return result
 
@@ -52,13 +52,29 @@ def _fetch_from_bok() -> ExchangeRateResponse:
     )
 
 
-def _fetch_from_yfinance() -> ExchangeRateResponse:
-    """Fallback: fetch USD/KRW from yfinance."""
-    tk = yf.Ticker("KRW=X")
-    hist = tk.history(period="5d")
-    if hist.empty:
+def _fetch_from_yahoo() -> ExchangeRateResponse:
+    """Fallback: fetch USD/KRW from Yahoo Finance direct API."""
+    from services.us_stocks import _session
+    url = "https://query1.finance.yahoo.com/v8/finance/chart/KRW=X"
+    params = {"range": "5d", "interval": "1d"}
+    resp = _session.get(url, params=params, timeout=10)
+    resp.raise_for_status()
+    data = resp.json()
+    result = data.get("chart", {}).get("result")
+    if not result:
         raise ValueError("Cannot fetch exchange rate")
-    rate = round(float(hist["Close"].iloc[-1]), 2)
+
+    closes = result[0].get("indicators", {}).get("quote", [{}])[0].get("close", [])
+    # Get last non-None close
+    rate = None
+    for c in reversed(closes):
+        if c is not None:
+            rate = round(c, 2)
+            break
+
+    if rate is None:
+        raise ValueError("No exchange rate data")
+
     return ExchangeRateResponse(
         usdKrw=rate,
         updatedAt=datetime.now().isoformat(),

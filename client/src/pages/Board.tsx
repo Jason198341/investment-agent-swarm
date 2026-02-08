@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useRef, useEffect } from 'react'
 import { AGENT_CONFIG as AGENT_CONFIG_IMPORT, SIGNAL_LABELS as SIGNAL_LABELS_IMPORT } from '@/types/agent'
 import { useAgentSwarm } from '@/hooks/useAgentSwarm'
 import { useBoardStore } from '@/stores/boardStore'
@@ -22,11 +22,13 @@ export default function Board() {
   }
 
   // Save to board when consensus arrives
-  const prevConsensusRef = useState<number | null>(null)
-  if (consensus && consensus.analyzedAt !== prevConsensusRef[0]) {
-    prevConsensusRef[1](consensus.analyzedAt)
-    addPostsFromSwarm(consensus)
-  }
+  const prevConsensusRef = useRef<number | null>(null)
+  useEffect(() => {
+    if (consensus && consensus.analyzedAt !== prevConsensusRef.current) {
+      prevConsensusRef.current = consensus.analyzedAt
+      addPostsFromSwarm(consensus)
+    }
+  }, [consensus, addPostsFromSwarm])
 
   const agentOrder: AgentType[] = ['macro', 'fundamental', 'technical', 'sentiment']
   const hasResults = agentOrder.some((t) => results[t] !== null)
