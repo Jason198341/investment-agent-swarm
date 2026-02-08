@@ -1,4 +1,7 @@
-const API_URL = '/api/fireworks/inference/v1/chat/completions'
+// Local dev: Vite proxy → Fireworks AI | Production: Vercel Edge Function
+const API_URL = import.meta.env.DEV
+  ? '/api/fireworks/inference/v1/chat/completions'
+  : '/api/ai/chat'
 const MODEL = 'accounts/fireworks/models/deepseek-v3p1'
 
 interface ChatMessage {
